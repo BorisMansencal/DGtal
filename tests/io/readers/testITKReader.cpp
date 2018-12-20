@@ -68,6 +68,24 @@ TEST_CASE( "Testing ITKReader" )
     testPath + "samples/lobsterCroped16b.mhd", resc );
     REQUIRE( ( im( Z3i::Point( 35, 29, 3 ) ) == resc( 60400 ) ) );
   }
+
+  SECTION(
+  "Testing ITKReader on non existent image"
+  "images" )
+  {
+    bool exceptionCatched = false;
+
+    std::string filename = testPath + "samples/null.mhd";
+    try {
+      Image3DUC image = ITKReader<Image3DUC>::importITK(filename);
+    }
+    catch(exception& e) {
+      trace.info() << "Exception catched. Message : " << e.what()<<endl;
+      exceptionCatched = true;
+    }
+
+    REQUIRE( exceptionCatched == true );
+  }
 }
 
 /** @ingroup Tests **/
