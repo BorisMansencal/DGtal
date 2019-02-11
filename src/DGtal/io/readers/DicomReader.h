@@ -115,6 +115,20 @@ namespace DGtal
 	static ImageContainer importDicom(const std::string & aFilename,
 									  const Functor & aFunctor =  Functor());
 
+	/**
+	 * Main method to import a Dicom serie into an instance of the
+	 * template parameter ImageContainer.
+	 *
+	 * @param aFilenames files of the serie to import.
+	 * @param aFunctor the functor used to import and cast the source
+	 * image values into the type of the image container value (by
+	 * default set to functors::Cast < TImageContainer::Value >.
+	 *
+	 * @return an instance of the ImageContainer.
+	 */
+        static ImageContainer importDicomSerie(const std::vector<std::string> & aFilenames,
+					       const Functor & aFunctor =  Functor());
+
  }; // end of class  DicomReader
 
 
