@@ -27,7 +27,6 @@
  */
 
 #include "DGtal/images/ConstImageAdapter.h"
-#include "DGtal/images/ImageContainerByITKImage.h"
 #include "DGtal/io/readers/ITKReader.h"
 #if defined(__GNUG__)
 #pragma GCC diagnostic push
@@ -43,8 +42,8 @@
 #pragma clang diagnostic pop
 #endif
 #if defined(__GNUG__)
-#endif
 #pragma GCC diagnostic pop
+#endif
 
 namespace DGtal {
 
@@ -142,10 +141,11 @@ namespace DGtal {
   }
 
 
+  template <typename I>
   template <typename Domain, typename PixelType>
   inline
   ImageContainerByITKImage<Domain, PixelType>
-  importDicomFiles(const std::vector<std::string> & aFilenames)
+  ITKDicomReader<I>::importDicomFiles(const std::vector<std::string> & filenames)
   {
     typedef ImageContainerByITKImage<Domain, PixelType> Image;
     
@@ -164,7 +164,7 @@ namespace DGtal {
       ItkImageIO::Pointer dicomIO = ItkImageIO::New();  //B:TODO ????? useful ???
       reader->SetImageIO(dicomIO);
       
-      reader->SetFileNames( aFilenames );
+      reader->SetFileNames( filenames );
       reader->Update();
 
       itk_image = reader->GetOutput();
@@ -176,7 +176,7 @@ namespace DGtal {
     }
     catch( ... )
     {
-      trace.error() << "ITKDicomReader: can't read " << aFilenames.size() << " files"<<std::endl;
+      trace.error() << "ITKDicomReader: can't read " << filenames.size() << " files"<<std::endl;
       throw IOException();
     }
     
@@ -196,14 +196,10 @@ namespace DGtal {
   }
 
 
-
+  template <typename I>
   template <typename Image, typename Domain, typename OrigValue, typename TFunctor, typename Value>
-  struct Aux
-  {
-    static 
-    inline
-    Image
-    readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,//TODO:B: rename aFilenames ???!!!
+  Image
+  ITKDicomReader<I>::Aux<Image, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
 			       const TFunctor & aFunctor )
     {
       //typedef typename Image::Domain Domain; //B:TODO: static_assert ??? ConceptUtils::sameType() ???
@@ -225,17 +221,14 @@ namespace DGtal {
       
       return image;
     }  
-  };
+  
 
   
   //specialization
+  template <typename I>
   template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
-  struct Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>
-  {
-    static 
-    inline
-    ImageContainerByITKImage<Domain, Value>//B:TODO: utiliser un typedef internes au lieu de dupliquer !!!???
-    readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,//TODO:B: rename aFilenames ???!!!
+  ImageContainerByITKImage<Domain, Value>//B:TODO: utiliser un typedef internes au lieu de dupliquer !!!???
+  ITKDicomReader<I>::Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
 			       const TFunctor & aFunctor )
     {
       //typedef typename Image::Domain Domain; //B:TODO: static_assert ??? ConceptUtils::sameType() ???
@@ -257,19 +250,19 @@ namespace DGtal {
       Image image(domain);
       std::copy(adapted.constRange().begin(), adapted.constRange().end(), image.range().outputIterator());
       
-      //copy ITKImage parameters
+      //copy ITKImage spatial parameters
       image.getITKImagePointer()->SetOrigin(dgtal_itk_image.getITKImagePointer()->GetOrigin());
       image.getITKImagePointer()->SetSpacing(dgtal_itk_image.getITKImagePointer()->GetSpacing());
       image.getITKImagePointer()->SetDirection(dgtal_itk_image.getITKImagePointer()->GetDirection());
       
       return image;
     }
-  };
+
 
   template <typename I>
   template <typename TypeDGtalImage, typename TFunctor>
   typename ITKDicomReader<I>::Image ITKDicomReader<I>::readDGtalImageFromITKtypes(
-    const std::vector<std::string> & filenames,  //TODO:B: rename aFilenames ???!!!
+    const std::vector<std::string> & filenames,  
     const TFunctor & aFunctor )
   {
     typedef typename Image::Domain Domain;

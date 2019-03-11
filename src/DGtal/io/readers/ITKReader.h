@@ -47,6 +47,7 @@
 #include "DGtal/images/CImage.h"
 #include "DGtal/base/BasicFunctors.h"
 #include "DGtal/io/ITKIOTrait.h"
+#include "DGtal/images/ImageContainerByITKImage.h"
 #if defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -60,8 +61,8 @@
 #pragma clang diagnostic pop
 #endif
 #if defined(__GNUG__)
-#endif
 #pragma GCC diagnostic pop
+#endif
 
 namespace DGtal
 {
@@ -115,6 +116,33 @@ namespace DGtal
     getITKComponentType( const std::string & filename );
 
     private:
+
+    template <typename Domain, typename PixelType>
+    static inline
+    ImageContainerByITKImage<Domain, PixelType>
+    readDGtalITKImage(const std::string & filename);
+
+    
+    template <typename Image, typename Domain, typename OrigValue, typename TFunctor, typename Value>
+    struct Aux
+    {
+      static inline
+      Image
+      readDGtalImageFromITKtypes( const std::string & filename,
+				  const TFunctor & aFunctor );
+    };
+
+    //specialization
+    template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
+    struct Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>
+    {
+      static inline
+      ImageContainerByITKImage<Domain, Value>
+      readDGtalImageFromITKtypes( const std::string & filename,
+				  const TFunctor & aFunctor );
+    };
+    
+    
     /**
      * Read an DGtal image of type TypeDGtalImage with a format supported by
      * ITK. (used by importITK)

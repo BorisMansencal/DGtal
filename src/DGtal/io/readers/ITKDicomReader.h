@@ -42,6 +42,7 @@
 #include "DGtal/base/CUnaryFunctor.h"
 #include "DGtal/images/CImage.h"
 #include "DGtal/io/ITKIOTrait.h"
+#include "DGtal/images/ImageContainerByITKImage.h"
 #if defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -110,6 +111,33 @@ namespace DGtal
 
     private:
 
+    template <typename Domain, typename PixelType>
+    static inline
+    ImageContainerByITKImage<Domain, PixelType>
+    importDicomFiles(const std::vector<std::string> & filenames);
+    
+
+    
+    template <typename Image, typename Domain, typename OrigValue, typename TFunctor, typename Value>
+    struct Aux
+    {
+      static inline
+      Image
+      readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
+				  const TFunctor & aFunctor );
+    };
+
+    //specialization
+    template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
+    struct Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>
+    {
+      static inline
+      ImageContainerByITKImage<Domain, Value>
+      readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
+				  const TFunctor & aFunctor );
+    };
+    
+    
     /**
      * Read an DGtal image of type TypeDGtalImage from files belonging 
      * to the same DICOM serie.

@@ -44,6 +44,7 @@
 #include "DGtal/base/Common.h"
 #include "DGtal/base/CUnaryFunctor.h"
 #include "DGtal/images/CImage.h"
+#include "DGtal/images/ImageContainerByITKImage.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -113,21 +114,58 @@ namespace DGtal
 	 * @return an instance of the ImageContainer.
 	 */
 	static ImageContainer importDicom(const std::string & aFilename,
-									  const Functor & aFunctor =  Functor());
+					  const Functor & aFunctor =  Functor());
 
 	/**
 	 * Main method to import a Dicom serie into an instance of the
 	 * template parameter ImageContainer.
 	 *
-	 * @param aFilenames files of the serie to import.
+	 * @param filenames files of the serie to import.
 	 * @param aFunctor the functor used to import and cast the source
 	 * image values into the type of the image container value (by
 	 * default set to functors::Cast < TImageContainer::Value >.
 	 *
 	 * @return an instance of the ImageContainer.
 	 */
-        static ImageContainer importDicomSerie(const std::vector<std::string> & aFilenames,
+        static ImageContainer importDicomSerie(const std::vector<std::string> & filenames,
 					       const Functor & aFunctor =  Functor());
+
+  private:
+
+    template <typename Domain, typename PixelType>
+    static inline
+    ImageContainerByITKImage<Domain, PixelType>
+    importDicomFiles_(const std::vector<std::string> & filenames);
+
+    
+    template <typename Image, typename Domain, typename OutPixelType, typename PixelType>
+    struct Aux
+    {
+      static inline
+      Image
+      importDicomFiles(const std::vector<std::string> & filenames,
+		       const TFunctor &aFunctor);
+    };
+
+    //specialization
+    template <typename Domain, typename OutPixelType, typename PixelType>
+    struct Aux<ImageContainerByITKImage<Domain, OutPixelType>, Domain, OutPixelType, PixelType>
+    {
+      static inline
+      ImageContainerByITKImage<Domain, OutPixelType>
+      importDicomFiles(const std::vector<std::string> & filenames,
+		       const TFunctor &aFunctor);
+    };
+
+    
+    
+    template <typename PixelType>
+    static inline
+    TImageContainer
+    importDicomFiles(const std::vector<std::string> & filenames,
+		     const TFunctor &aFunctor);
+
+    
 
  }; // end of class  DicomReader
 
