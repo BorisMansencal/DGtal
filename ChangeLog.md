@@ -41,6 +41,11 @@
 - *Geometry*
   - New LpMetric class (model of CMetricSpace) for distance computations in R^n.
     (David Coeurjolly,  [#1388](https://github.com/DGtal-team/DGtal/pull/1388))
+ 
+- *Documentation*
+  - Improving KhalimskySpace related classes documentations by displaying
+    a short description in the member list.
+    (Roland Denis,  [#1398](https://github.com/DGtal-team/DGtal/pull/1398))
 
 ## Bug Fixes
 
@@ -61,8 +66,9 @@
     [#1389](https://github.com/DGtal-team/DGtal/pull/1389))
   - Fix compilation and adding debug version for the generated file with Visual Studio
     (Raphael Lenain, [#1395](https://github.com/DGtal-team/DGtal/pull/1395))
-  
-	
+  - Correct pragma pop in ITK related files
+    (Boris Mansencal, [#1400](https://github.com/DGtal-team/DGtal/pull/1400))
+
 - *Base*
   - Fixing wrong members in PredicateCombiner (David Coeurjolly,
     [#1321](https://github.com/DGtal-team/DGtal/pull/1321))
@@ -153,7 +159,8 @@
     (Thomas Caissard, [#1316](https://github.com/DGtal-team/DGtal/pull/1316))
   - Change from private to public access of types Input and Output in SCellToPoint
     (Daniel Antunes, [#1346](https://github.com/DGtal-team/DGtal/pull/1346))
-
+  - Correct small typo when compiling with DEBUG defined
+    (Boris Mansencal, [#1401](https://github.com/DGtal-team/DGtal/pull/1401))
 
 # DGtal 0.9.4.1
 
