@@ -49,22 +49,21 @@ namespace DGtal {
 
   template <typename I>
   template <typename TFunctor>
-  I ITKDicomReader<I>::importDICOM(
-  const std::vector<std::string> & filenames,
-  const TFunctor & aFunctor )
+  I ITKDicomReader<I>::importDICOM( const std::vector<std::string> & filenames,
+				    const TFunctor & aFunctor )
   {
-    if (filenames.empty())
+    if ( filenames.empty() )
     {
       trace.error() << "[ITKDicomReader] empty filenames vector passed.";
       throw IOException();
     }
-
     
     typedef typename Image::Domain Domain;
     typedef itk::ImageIOBase::IOComponentType IOComponentType;
     BOOST_CONCEPT_ASSERT( (concepts::CUnaryFunctor<TFunctor, ValueOut, Value>));
-    const IOComponentType componentType = ITKReader<I>::getITKComponentType( filenames[0] );
-    //We suppose all file have the same 'componentType'.
+    const IOComponentType componentType =
+      ITKReader<I>::getITKComponentType( filenames[0] );
+    // We suppose all file have the same 'componentType'.
     
     switch ( componentType )
     {
@@ -72,7 +71,8 @@ namespace DGtal {
     default:
     case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
     {
-      trace.error() << "[ITKDicomReader] Unknown and unsupported component type!";
+      trace.error()
+	<< "[ITKDicomReader] Unknown and unsupported component type!";
       throw IOException();
     }
     case itk::ImageIOBase::UCHAR:
@@ -115,10 +115,12 @@ namespace DGtal {
       typedef ImageContainerByITKImage<Domain, long> DGtalITKImage;
       return readDGtalImageFromITKtypes<DGtalITKImage>( filenames, aFunctor );
     }
-#if (ITK_VERSION_MAJOR > 4) || (ITK_VERSION_MAJOR == 4 && ITK_VERSION_MINOR >= 13)
+#if (ITK_VERSION_MAJOR > 4)
+    || (ITK_VERSION_MAJOR == 4 && ITK_VERSION_MINOR >= 13)
     case itk::ImageIOBase::ULONGLONG:
     {
-      typedef ImageContainerByITKImage<Domain, unsigned long long> DGtalITKImage;
+      typedef ImageContainerByITKImage<Domain, unsigned long long>
+	DGtalITKImage;
       return readDGtalImageFromITKtypes<DGtalITKImage>( filenames, aFunctor );
     }
     case itk::ImageIOBase::LONGLONG:
@@ -145,7 +147,8 @@ namespace DGtal {
   template <typename Domain, typename PixelType>
   inline
   ImageContainerByITKImage<Domain, PixelType>
-  ITKDicomReader<I>::importDicomFiles(const std::vector<std::string> & filenames)
+  ITKDicomReader<I>::
+  importDicomFiles(const std::vector<std::string> & filenames)
   {
     typedef ImageContainerByITKImage<Domain, PixelType> Image;
     
@@ -162,31 +165,34 @@ namespace DGtal {
     {
       typename ItkReader::Pointer reader = ItkReader::New();
       //ItkImageIO::Pointer dicomIO = ItkImageIO::New();
-      //reader->SetImageIO(dicomIO);
+      //reader->SetImageIO( dicomIO );
       
       reader->SetFileNames( filenames );
       reader->Update();
 
       itk_image = reader->GetOutput();
     }
-    catch (itk::ExceptionObject &e)
+    catch ( itk::ExceptionObject & e )
     {
       trace.error() << e;
       throw IOException();
     }
     catch( ... )
     {
-      trace.error() << "ITKDicomReader: can't read " << filenames.size() << " files"<<std::endl;
+      trace.error() << "ITKDicomReader: can't read " << filenames.size()
+		    << " files"<<std::endl;
       throw IOException();
     }
     
-    const typename ItkImage::SizeType& inputSize = itk_image->GetLargestPossibleRegion().GetSize();
+    const typename ItkImage::SizeType& inputSize =
+      itk_image->GetLargestPossibleRegion().GetSize();
     const unsigned int width = inputSize[0];
     const unsigned int height = inputSize[1];
     const unsigned int depth = inputSize[2];
     if ( !height || !width || !depth )
     {
-      trace.error() << "ITKDicomReader: one dimension is null (w=" << width << ", h=" << height << ", d=" << depth << ")" << std::endl;
+      trace.error() << "ITKDicomReader: one dimension is null (w=" << width
+		    << ", h=" << height << ", d=" << depth << ")" << std::endl;
       throw IOException();
     }
     
@@ -197,72 +203,87 @@ namespace DGtal {
 
 
   template <typename I>
-  template <typename Image, typename Domain, typename OrigValue, typename TFunctor, typename Value>
+  template <typename Image, typename Domain, typename OrigValue,
+	    typename TFunctor, typename Value>
   Image
-  ITKDicomReader<I>::Aux<Image, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
-			       const TFunctor & aFunctor )
-    {
-      typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
-      TypeDGtalImage dgtal_itk_image = importDicomFiles<Domain, OrigValue>(filenames);
+  ITKDicomReader<I>::Aux<Image, Domain, OrigValue, TFunctor, Value>::
+  readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
+			      const TFunctor & aFunctor )
+  {
+    typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
+    TypeDGtalImage dgtal_itk_image =
+      importDicomFiles<Domain, OrigValue>( filenames );
       
-      const Domain& domain = dgtal_itk_image.domain();
+    const Domain& domain = dgtal_itk_image.domain();
       
-      typedef ConstImageAdapter<TypeDGtalImage, Domain, functors::Identity, Value,
-				TFunctor>
-	AdaptedImage;
-      const functors::Identity identityFunctor{};
-      const AdaptedImage adapted(dgtal_itk_image, domain, identityFunctor, aFunctor);
+    typedef ConstImageAdapter<TypeDGtalImage, Domain, functors::Identity,
+			      Value, TFunctor>
+      AdaptedImage;
+    const functors::Identity identityFunctor{};
+    const AdaptedImage adapted( dgtal_itk_image, domain, identityFunctor,
+			        aFunctor);
       
-      Image image(domain);
-      std::copy(adapted.constRange().begin(), adapted.constRange().end(), image.range().outputIterator());
-      
-      return image;
-    }  
+    Image image( domain );
+    std::copy( adapted.constRange().begin(), adapted.constRange().end(),
+	       image.range().outputIterator() );
+    
+    return image;
+  }  
   
 
   
   //specialization
   template <typename I>
-  template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
+  template <typename Domain, typename OrigValue, typename TFunctor,
+	    typename Value>
   ImageContainerByITKImage<Domain, Value>
-  ITKDicomReader<I>::Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
-			       const TFunctor & aFunctor )
-    {
-      typedef ImageContainerByITKImage<Domain, Value> Image;
+  ITKDicomReader<I>::Aux<ImageContainerByITKImage<Domain, Value>, Domain,
+			 OrigValue, TFunctor, Value>::
+  readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
+			      const TFunctor & aFunctor )
+  {
+    typedef ImageContainerByITKImage<Domain, Value> Image;
       
-      typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
-      TypeDGtalImage dgtal_itk_image = importDicomFiles<Domain, OrigValue>(filenames);
+    typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
+    TypeDGtalImage dgtal_itk_image =
+      importDicomFiles<Domain, OrigValue>( filenames );
+    
+    const Domain& domain = dgtal_itk_image.domain();
       
-      const Domain& domain = dgtal_itk_image.domain();
+    typedef ConstImageAdapter<TypeDGtalImage, Domain, functors::Identity,
+			      Value, TFunctor>
+      AdaptedImage;
+    const functors::Identity identityFunctor{};
+    const AdaptedImage adapted( dgtal_itk_image, domain, identityFunctor,
+			        aFunctor);
       
-      typedef ConstImageAdapter<TypeDGtalImage, Domain, functors::Identity, Value,
-				TFunctor>
-	AdaptedImage;
-      const functors::Identity identityFunctor{};
-      const AdaptedImage adapted(dgtal_itk_image, domain, identityFunctor, aFunctor);
+    Image image( domain );
+    std::copy( adapted.constRange().begin(), adapted.constRange().end(),
+	       image.range().outputIterator() );
       
-      Image image(domain);
-      std::copy(adapted.constRange().begin(), adapted.constRange().end(), image.range().outputIterator());
+    //copy ITKImage spatial parameters
+    image.getITKImagePointer()->SetOrigin(
+      dgtal_itk_image.getITKImagePointer()->GetOrigin() );
+    image.getITKImagePointer()->SetSpacing(
+      dgtal_itk_image.getITKImagePointer()->GetSpacing() );
+    image.getITKImagePointer()->SetDirection(
+      dgtal_itk_image.getITKImagePointer()->GetDirection() );
       
-      //copy ITKImage spatial parameters
-      image.getITKImagePointer()->SetOrigin(dgtal_itk_image.getITKImagePointer()->GetOrigin());
-      image.getITKImagePointer()->SetSpacing(dgtal_itk_image.getITKImagePointer()->GetSpacing());
-      image.getITKImagePointer()->SetDirection(dgtal_itk_image.getITKImagePointer()->GetDirection());
-      
-      return image;
-    }
+    return image;
+  }
 
 
   template <typename I>
   template <typename TypeDGtalImage, typename TFunctor>
-  typename ITKDicomReader<I>::Image ITKDicomReader<I>::readDGtalImageFromITKtypes(
-    const std::vector<std::string> & filenames,  
-    const TFunctor & aFunctor )
+  typename ITKDicomReader<I>::Image ITKDicomReader<I>::
+  readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,  
+			      const TFunctor & aFunctor )
   {
     typedef typename Image::Domain Domain;
     typedef typename TypeDGtalImage::Value OrigValue;
 
-    return Aux<Image, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(filenames, aFunctor);
+    return Aux<Image, Domain, OrigValue, TFunctor, Value>::
+      readDGtalImageFromITKtypes( filenames, aFunctor );
   }
 
 }//namespace

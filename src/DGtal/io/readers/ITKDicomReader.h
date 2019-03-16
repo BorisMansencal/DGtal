@@ -19,7 +19,7 @@
 /**
  * @file ITKDicomReader.h
  * @author Boris Mansencal (\c boris.mansencal@labri.fr )
- * LaBRI (CNRS, UMR 5800, University of Bordeaux, Bordeaux-INP, France
+ * LaBRI (CNRS, UMR 5800, University of Bordeaux, Bordeaux-INP), France
  *
  * @date 2019/02/05
  *
@@ -85,7 +85,8 @@ namespace DGtal
     typedef typename ITKIOTrait<Value>::ValueOut ValueOut;
 
     BOOST_CONCEPT_ASSERT(( concepts::CImage<TImage> ));
-    BOOST_STATIC_ASSERT(( (TImage::Domain::dimension == 3) || (TImage::Domain::dimension == 2) ));
+    BOOST_STATIC_ASSERT(( (TImage::Domain::dimension == 3)
+			  || (TImage::Domain::dimension == 2) ));
 
     /**
      * Import an Image from files belonging to the same DICOM serie.
@@ -95,7 +96,8 @@ namespace DGtal
      * resulting image type is adapted to the TImage type with the use
      * of the given Functor.
      *
-     * @param filenames fullnames of file of a DICOM serie. They may be gathered with an itk::GDCMSeriesFileNames instance.
+     * @param filenames fullnames of file of a DICOM serie. They may be 
+     * gathered with an itk::GDCMSeriesFileNames instance.
      * @param aFunctor functor used to cast image values.
      * @tparam TFunctor the type of functor used in the export.
      *
@@ -103,9 +105,8 @@ namespace DGtal
      */
     template <typename TFunctor =
               typename ITKIOTrait<typename TImage::Value>::DefaultReadFunctor>
-    static Image importDICOM(
-    const std::vector<std::string> & filenames,
-    const TFunctor & aFunctor = TFunctor() );
+    static Image importDICOM( const std::vector<std::string> & filenames,
+			      const TFunctor & aFunctor = TFunctor() );
 
 
     private:
@@ -113,25 +114,26 @@ namespace DGtal
     template <typename Domain, typename PixelType>
     static inline
     ImageContainerByITKImage<Domain, PixelType>
-    importDicomFiles(const std::vector<std::string> & filenames);
+    importDicomFiles( const std::vector<std::string> & filenames );
     
 
     
-    template <typename Image, typename Domain, typename OrigValue, typename TFunctor, typename Value>
+    template <typename Image, typename Domain, typename OrigValue,
+              typename TFunctor, typename Value>
     struct Aux
     {
-      static inline
-      Image
+      static inline Image
       readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
 				  const TFunctor & aFunctor );
     };
 
     //specialization
-    template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
-    struct Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>
+    template <typename Domain, typename OrigValue, typename TFunctor,
+              typename Value>
+    struct Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue,
+               TFunctor, Value>
     {
-      static inline
-      ImageContainerByITKImage<Domain, Value>
+      static inline ImageContainerByITKImage<Domain, Value>
       readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
 				  const TFunctor & aFunctor );
     };
@@ -141,16 +143,17 @@ namespace DGtal
      * Read an DGtal image of type TypeDGtalImage from files belonging 
      * to the same DICOM serie.
      *
-     * @param filenames fullnames of file of a DICOM serie. They may be gathered with an itk::GDCMSeriesFileNames instance.
+     * @param filenames fullnames of file of a DICOM serie. They may be 
+     * gathered with an itk::GDCMSeriesFileNames instance.
      * @param aFunctor functor used to cast image values
      * @tparam TFunctor the type of functor used in the export.
      *
      * @return read image
      */
     template <typename TypeDGtalImage, typename TFunctor>
-    static Image readDGtalImageFromITKtypes(
-    const std::vector<std::string> & filenames,
-    const TFunctor & aFunctor );
+    static Image
+    readDGtalImageFromITKtypes( const std::vector<std::string> & filenames,
+				const TFunctor & aFunctor );
   };
 }//namespace
 
