@@ -71,7 +71,6 @@ namespace DGtal
    *  and to compile DGtal with -DWITH_ITK option.
    *
    *  Simple example: (extract from test/io/readers/testITKDicomReader.cpp)
-   * //B:TODO : mettre code example ou juste un ref ???
    *
    *
    * @tparam TImage the Image type.
@@ -96,7 +95,7 @@ namespace DGtal
      * resulting image type is adapted to the TImage type with the use
      * of the given Functor.
      *
-     * @param filenames names of file of a DICOM serie. //B:TODO: dire si path complet ou pas ???
+     * @param filenames fullnames of file of a DICOM serie. They may be gathered with an itk::GDCMSeriesFileNames instance.
      * @param aFunctor functor used to cast image values.
      * @tparam TFunctor the type of functor used in the export.
      *
@@ -142,7 +141,7 @@ namespace DGtal
      * Read an DGtal image of type TypeDGtalImage from files belonging 
      * to the same DICOM serie.
      *
-     * @param filenames names of file of a DICOM serie. //B:TODO: dire si path complet ou pas ???
+     * @param filenames fullnames of file of a DICOM serie. They may be gathered with an itk::GDCMSeriesFileNames instance.
      * @param aFunctor functor used to cast image values
      * @tparam TFunctor the type of functor used in the export.
      *

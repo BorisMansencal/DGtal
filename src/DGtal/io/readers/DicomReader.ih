@@ -185,7 +185,6 @@ DicomReader<TImageContainer, TFunctor>::Aux<ImageContainerByITKImage<Domain, Out
 }
 
   
-//B:TODO: re-ordonner les parametres template de Aux ??? On se perd un peut entre Value/PixelType... !!!
 template <typename TImageContainer, typename TFunctor>
 template <typename PixelType>
 inline
@@ -206,8 +205,6 @@ DicomReader<TImageContainer, TFunctor>::importDicom(const std::string & aFilenam
 						    const TFunctor &aFunctor)
 {
   std::string directory = aFilename.substr(0, aFilename.find_last_of("/"));
-  //B:TODO: use ITK to retrieve directory ?
-  //B:TODO: In which ITK version did it appear ? What is the minimal ITK version for DGtal ???
 
   typedef itk::GDCMSeriesFileNames ItkNamesGenerator;
   ItkNamesGenerator::Pointer nameGenerator = ItkNamesGenerator::New();

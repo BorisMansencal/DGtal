@@ -161,8 +161,8 @@ namespace DGtal {
     try
     {
       typename ItkReader::Pointer reader = ItkReader::New();
-      ItkImageIO::Pointer dicomIO = ItkImageIO::New();  //B:TODO ????? useful ???
-      reader->SetImageIO(dicomIO);
+      //ItkImageIO::Pointer dicomIO = ItkImageIO::New();
+      //reader->SetImageIO(dicomIO);
       
       reader->SetFileNames( filenames );
       reader->Update();
@@ -202,9 +202,6 @@ namespace DGtal {
   ITKDicomReader<I>::Aux<Image, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
 			       const TFunctor & aFunctor )
     {
-      //typedef typename Image::Domain Domain; //B:TODO: static_assert ??? ConceptUtils::sameType() ???
-      //typedef typename TypeDGtalImage::Value OrigValue;
-      
       typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
       TypeDGtalImage dgtal_itk_image = importDicomFiles<Domain, OrigValue>(filenames);
       
@@ -227,13 +224,10 @@ namespace DGtal {
   //specialization
   template <typename I>
   template <typename Domain, typename OrigValue, typename TFunctor, typename Value>
-  ImageContainerByITKImage<Domain, Value>//B:TODO: utiliser un typedef internes au lieu de dupliquer !!!???
+  ImageContainerByITKImage<Domain, Value>
   ITKDicomReader<I>::Aux<ImageContainerByITKImage<Domain, Value>, Domain, OrigValue, TFunctor, Value>::readDGtalImageFromITKtypes(const std::vector<std::string> & filenames,
 			       const TFunctor & aFunctor )
     {
-      //typedef typename Image::Domain Domain; //B:TODO: static_assert ??? ConceptUtils::sameType() ???
-      //typedef typename TypeDGtalImage::Value OrigValue;
-
       typedef ImageContainerByITKImage<Domain, Value> Image;
       
       typedef ImageContainerByITKImage<Domain, OrigValue> TypeDGtalImage;
