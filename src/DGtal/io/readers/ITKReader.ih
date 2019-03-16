@@ -108,7 +108,7 @@ namespace DGtal {
       typedef ImageContainerByITKImage<Domain, long> DGtalITKImage;
       return readDGtalImageFromITKtypes<DGtalITKImage>( filename, aFunctor );
     }
-#if (ITK_VERSION_MAJOR > 4)
+#if (ITK_VERSION_MAJOR > 4)\
     || (ITK_VERSION_MAJOR == 4 && ITK_VERSION_MINOR >= 13)
     case itk::ImageIOBase::ULONGLONG:
     {
